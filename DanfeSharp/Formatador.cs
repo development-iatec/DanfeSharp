@@ -211,7 +211,7 @@ namespace DanfeSharp
 
         public static String Formatar(this DateTime? dateTime)
         {
-            return dateTime.HasValue ? dateTime.Value.ToShortDateString() : String.Empty;
+            return dateTime.HasValue ? dateTime.Value.ToString("dd/MM/yyyy") : String.Empty;
         }
 
         public static String Formatar(this TimeSpan? timeSpan)

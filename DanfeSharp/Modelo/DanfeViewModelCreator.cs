@@ -84,7 +84,7 @@ namespace DanfeSharp.Modelo
         /// <returns>Modelo</returns>
         public static DanfeViewModel CriarDeArquivoXml(Stream stream)
         {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));     
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
 
             using (StreamReader sr = new StreamReader(stream, true))
             {
@@ -104,7 +104,6 @@ namespace DanfeSharp.Modelo
                 return CriarDeArquivoXmlInternal(sr);
             }
         }
-
 
         private static DanfeViewModel CriarDeArquivoXmlInternal(TextReader reader)
         {
@@ -134,8 +133,8 @@ namespace DanfeSharp.Modelo
 
             if (infNfe.Versao.Maior >= 3)
             {
-                if(ide.dhEmi.HasValue) model.DataHoraEmissao = ide.dhEmi.Value.DateTimeOffsetValue.DateTime;
-                if(ide.dhSaiEnt.HasValue) model.DataSaidaEntrada = ide.dhSaiEnt.Value.DateTimeOffsetValue.DateTime;
+                if (ide.dhEmi.HasValue) model.DataHoraEmissao = ide.dhEmi.Value.DateTimeOffsetValue.DateTime;
+                if (ide.dhSaiEnt.HasValue) model.DataSaidaEntrada = ide.dhSaiEnt.Value.DateTimeOffsetValue.DateTime;
 
                 if (model.DataSaidaEntrada.HasValue)
                 {
@@ -151,7 +150,6 @@ namespace DanfeSharp.Modelo
                 {
                     model.HoraSaidaEntrada = TimeSpan.Parse(ide.hSaiEnt);
                 }
-
             }
         }
 
@@ -197,7 +195,6 @@ namespace DanfeSharp.Modelo
             {
                 throw new Exception("Somente o tpEmis==1 está implementado.");
             }
-
 
             model.Orientacao = ide.tpImp == 1 ? Orientacao.Retrato : Orientacao.Paisagem;
 
@@ -320,7 +317,6 @@ namespace DanfeSharp.Modelo
                 transportadoraModel.Ie = transportadora.IE;
             }
 
-
             var vol = transp.vol.FirstOrDefault();
 
             if (vol != null)
@@ -333,7 +329,6 @@ namespace DanfeSharp.Modelo
                 transportadoraModel.PesoLiquido = vol.pesoL;
             }
 
-
             var infAdic = infNfe.infAdic;
             if (infAdic != null)
             {
@@ -341,14 +336,20 @@ namespace DanfeSharp.Modelo
                 model.InformacoesAdicionaisFisco = procNfe.NFe.infNFe.infAdic.infAdFisco;
             }
 
-            var infoProto = procNfe.protNFe.infProt;
-
-            model.ProtocoloAutorizacao = String.Format(Formatador.Cultura, "{0} - {1}", infoProto.nProt, infoProto.dhRecbto.DateTimeOffsetValue.DateTime);
+            if (procNfe.protNFe != null)
+            {
+                var infoProto = procNfe.protNFe.infProt;
+                model.ProtocoloAutorizacao = $"{infoProto.nProt} - {infoProto.dhRecbto}";
+            }
+            else
+            {
+                var dhEmi = procNfe.NFe.infNFe.ide.dhEmi;
+                model.ProtocoloAutorizacao = $"{dhEmi}";
+            }
 
             ExtrairDatas(model, infNfe);
 
             return model;
         }
-
     }
 }
